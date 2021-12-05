@@ -19,7 +19,7 @@ const filename = path.resolve(__dirname, './child-process.js')
 
 describe('ChildProcess as Client, Main as Server', () => {
   test('echo', async () => {
-    const childProcess = fork(filename)
+    const childProcess = fork(filename, { serialization: 'advanced' })
     const cancelServer = createServer(api, childProcess)
 
     const [client, close] = createClient<{
@@ -36,7 +36,7 @@ describe('ChildProcess as Client, Main as Server', () => {
   })
 
   test('error', async () => {
-    const childProcess = fork(filename)
+    const childProcess = fork(filename, { serialization: 'advanced' })
     const cancelServer = createServer(api, childProcess)
 
     const [client, close] = createClient<{
