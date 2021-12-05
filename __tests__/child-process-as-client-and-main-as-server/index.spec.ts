@@ -4,15 +4,22 @@ import { fork } from 'child_process'
 import '@blackglory/jest-matchers'
 import { IAPI } from './api'
 import * as path from 'path'
+import { getErrorPromise } from 'return-style'
+
+const api: IAPI = {
+  echo(message: string): string {
+    return message
+  }
+, error(message: string): never {
+    throw new Error(message)
+  }
+}
+
+const filename = path.resolve(__dirname, './child-process.js')
 
 describe('ChildProcess as Client, Main as Server', () => {
-  it('echo', async () => {
-    const api: IAPI = {
-      echo(message: string): string {
-        return message
-      }
-    }
-    const childProcess = fork(path.resolve(__dirname, './child-process.js'))
+  test('echo', async () => {
+    const childProcess = fork(filename)
     const cancelServer = createServer(api, childProcess)
 
     const [client, close] = createClient<{
@@ -22,6 +29,24 @@ describe('ChildProcess as Client, Main as Server', () => {
       const result = await client.eval('client.echo("hello")')
       close()
       expect(result).toEqual('hello')
+    } finally {
+      cancelServer()
+      childProcess.kill()
+    }
+  })
+
+  test('error', async () => {
+    const childProcess = fork(filename)
+    const cancelServer = createServer(api, childProcess)
+
+    const [client, close] = createClient<{
+      eval: (code: string) => any
+    }>(childProcess)
+    try {
+      const err = await getErrorPromise(client.eval('client.error("hello")'))
+      close()
+      expect(err).toBeInstanceOf(Error)
+      expect(err!.message).toMatch('Error: hello')
     } finally {
       cancelServer()
       childProcess.kill()
