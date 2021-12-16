@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/delight-rpc/child-process/compare/v0.1.1...v0.2.0) (2021-12-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* - The minimum version is Node.js v16
+
+* upgrade dependencies ([1bd59d8](https://github.com/delight-rpc/child-process/commit/1bd59d85a0fff60bbc950db95ded7cc05973df00))
+
 ### [0.1.1](https://github.com/delight-rpc/child-process/compare/v0.1.0...v0.1.1) (2021-12-05)
 
 
