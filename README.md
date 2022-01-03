@@ -27,7 +27,7 @@ createServer(api, process)
 
 // main.ts
 import { fork } from 'child_process'
-import { createClient } from '@delight-rpc/client'
+import { createClient } from '@delight-rpc/child-process'
 
 const childProcess = fork('./child-process.js', { serialization: 'advanced' })
 const [client] = createClient<IAPI>(childProcess)
@@ -56,7 +56,7 @@ const childProcess = fork('./child-process.js', { serialization: 'advanced' })
 createServer(api, childProcess)
 
 // child-process.ts
-import { createClient } from '@delight-rpc/client'
+import { createClient } from '@delight-rpc/child-process'
 
 const [client] = createClient<IAPI>(process)
 await client.echo('hello world')
