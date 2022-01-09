@@ -74,7 +74,7 @@ function createClient<IAPI extends object>(
 ### createServer
 ```ts
 function createServer<IAPI extends object>(
-  api: IAPI
+  api: DelightRPC.ImplementationOf<IAPI>
 , process: ChildProcess | NodeJS.Process
 , parameterValidators?: DelightRPC.ParameterValidators<IAPI>
 ): () => void

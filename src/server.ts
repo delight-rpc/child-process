@@ -2,7 +2,7 @@ import * as DelightRPC from 'delight-rpc'
 import { ChildProcess } from 'child_process'
 
 export function createServer<IAPI extends object>(
-  api: IAPI
+  api: DelightRPC.ImplementationOf<IAPI>
 , process: ChildProcess | NodeJS.Process
 , parameterValidators?: DelightRPC.ParameterValidators<IAPI>
 ): () => void {
