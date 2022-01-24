@@ -68,6 +68,7 @@ await client.echo('hello world')
 function createClient<IAPI extends object>(
   process: ChildProcess | NodeJS.Process
 , parameterValidators?: DelightRPC.ParameterValidators<IAPI>
+, expectedVersion?: `${number}.${number}.${number}`
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
 
@@ -77,5 +78,6 @@ function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
 , process: ChildProcess | NodeJS.Process
 , parameterValidators?: DelightRPC.ParameterValidators<IAPI>
+, version?: `${number}.${number}.${number}`
 ): () => void
 ```
