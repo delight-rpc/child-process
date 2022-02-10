@@ -34,6 +34,6 @@ describe('Main as Client, ChildProcess as Server', () => {
     close()
 
     expect(err).toBeInstanceOf(Error)
-    expect(err!.message).toMatch('Error: hello')
+    expect(err!.message).toMatch('hello')
   })
 })
