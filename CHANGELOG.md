@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/delight-rpc/child-process/compare/v0.3.0...v0.3.1) (2022-03-18)
+
+
+### Features
+
+* add createBatchClient ([01f3acb](https://github.com/delight-rpc/child-process/commit/01f3acbf0c1b2a08e99aa6c227357d86abfc7190))
+
 ## [0.3.0](https://github.com/delight-rpc/child-process/compare/v0.2.6...v0.3.0) (2022-02-10)
 
 
