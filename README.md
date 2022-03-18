@@ -72,6 +72,14 @@ function createClient<IAPI extends object>(
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
 
+### createBatchClient
+```ts
+function createBatchClient(
+  process: ChildProcess | NodeJS.Process
+, expectedVersion?: `${number}.${number}.${number}`
+): [client: DelightRPC.BatchClient, close: () => void]
+```
+
 ### createServer
 ```ts
 function createServer<IAPI extends object>(
