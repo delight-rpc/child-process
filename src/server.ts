@@ -11,7 +11,7 @@ export function createServer<IAPI extends object>(
   return () => process.off('message', handler)
 
   async function handler(req: any): Promise<void> {
-    if (DelightRPC.isRequest(req)) {
+    if (DelightRPC.isRequest(req) || DelightRPC.isBatchRequest(req)) {
       const result = await DelightRPC.createResponse(
         api
       , req
