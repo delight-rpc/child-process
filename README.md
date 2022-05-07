@@ -67,8 +67,11 @@ await client.echo('hello world')
 ```ts
 function createClient<IAPI extends object>(
   process: ChildProcess | NodeJS.Process
-, parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-, expectedVersion?: `${number}.${number}.${number}`
+, options?: {
+    parameterValidators?: DelightRPC.ParameterValidators<IAPI>
+    expectedVersion?: `${number}.${number}.${number}`
+    channel?: string
+  }
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
 
@@ -76,7 +79,10 @@ function createClient<IAPI extends object>(
 ```ts
 function createBatchClient(
   process: ChildProcess | NodeJS.Process
-, expectedVersion?: `${number}.${number}.${number}`
+, options?: {
+    expectedVersion?: `${number}.${number}.${number}`
+    channel?: string
+  }
 ): [client: DelightRPC.BatchClient, close: () => void]
 ```
 
@@ -85,7 +91,10 @@ function createBatchClient(
 function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
 , process: ChildProcess | NodeJS.Process
-, parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-, version?: `${number}.${number}.${number}`
+, options?: {
+    parameterValidators?: DelightRPC.ParameterValidators<IAPI>
+    version?: `${number}.${number}.${number}`
+    channel?: string
+  }
 ): () => void
 ```
