@@ -58,6 +58,6 @@
     "extra-promise": "^1.0.2"
   },
   "peerDependencies": {
-    "delight-rpc": "^2.1.1"
+    "delight-rpc": "^4.0.0"
   }
 }
