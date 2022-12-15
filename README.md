@@ -23,7 +23,7 @@ const api: IAPI = {
   }
 }
 
-createServer(api, process) 
+createServer(api, process)
 
 // main.ts
 import { fork } from 'child_process'
@@ -69,7 +69,7 @@ function createClient<IAPI extends object>(
   process: ChildProcess | NodeJS.Process
 , options?: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
   }
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
@@ -80,7 +80,7 @@ function createClient<IAPI extends object>(
 function createBatchClient(
   process: ChildProcess | NodeJS.Process
 , options?: {
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
   }
 ): [client: DelightRPC.BatchClient, close: () => void]

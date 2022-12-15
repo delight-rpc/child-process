@@ -8,7 +8,7 @@ export function createClient<IAPI extends object>(
   process: ChildProcess | NodeJS.Process
 , { parameterValidators, expectedVersion, channel }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
@@ -55,7 +55,7 @@ export function createClient<IAPI extends object>(
 export function createBatchClient(
   process: ChildProcess | NodeJS.Process
 , { expectedVersion, channel }: {
-    expectedVersion?: `${number}.${number}.${number}`
+    expectedVersion?: string
     channel?: string
   } = {}
 ): [client: DelightRPC.BatchClient, close: () => void] {
