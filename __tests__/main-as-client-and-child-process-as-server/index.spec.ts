@@ -1,6 +1,5 @@
 import { createClient } from '@src/client'
 import { fork, ChildProcess } from 'child_process'
-import '@blackglory/jest-matchers'
 import { IAPI } from './api'
 import * as path from 'path'
 import { getErrorPromise } from 'return-style'
@@ -19,12 +18,10 @@ describe('Main as Client, ChildProcess as Server', () => {
   test('echo', async () => {
     const [client, close] = createClient<IAPI>(childProcess)
 
-    const result = client.echo('hello')
-    const proResult = await result
+    const result = await client.echo('hello')
     close()
 
-    expect(result).toBePromise()
-    expect(proResult).toStrictEqual('hello')
+    expect(result).toStrictEqual('hello')
   })
 
   test('error', async () => {
