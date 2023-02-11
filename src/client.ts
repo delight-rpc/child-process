@@ -52,13 +52,13 @@ export function createClient<IAPI extends object>(
   }
 }
 
-export function createBatchClient(
+export function createBatchClient<DataType>(
   process: ChildProcess | NodeJS.Process
 , { expectedVersion, channel }: {
     expectedVersion?: string
     channel?: string
   } = {}
-): [client: DelightRPC.BatchClient, close: () => void] {
+): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
   const pendings: Record<
     string
   , | Deferred<IError | IBatchResponse<unknown>>
