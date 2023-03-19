@@ -19,9 +19,8 @@
   "scripts": {
     "prepare": "ts-patch install -s",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src",
-    "test": "cross-env NODE_OPTIONS='--experimental-vm-modules --loader ts-node/esm' jest --config jest.config.cjs",
+    "test": "cross-env NODE_OPTIONS='--experimental-vm-modules --loader ts-node/esm' jest --runInBand --config jest.config.cjs",
     "test:debug": "cross-env NODE_OPTIONS='--experimental-vm-modules --loader ts-node/esm' node --inspect-brk node_modules/.bin/jest --runInBand --config jest.config.cjs",
-    "test:coverage": "cross-env NODE_OPTIONS='--experimental-vm-modules --loader ts-node/esm' jest --coverage --config jest.config.cjs",
     "prepublishOnly": "run-s prepare clean build",
     "clean": "rimraf lib",
     "build": "tsc --project tsconfig.build.json",
