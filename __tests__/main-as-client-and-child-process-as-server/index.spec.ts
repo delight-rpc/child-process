@@ -1,8 +1,11 @@
-import { createClient } from '@src/client'
+import { createClient } from '@src/client.js'
 import { fork, ChildProcess } from 'child_process'
-import { IAPI } from './api'
+import { IAPI } from './contract.js'
 import * as path from 'path'
 import { getErrorPromise } from 'return-style'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('Main as Client, ChildProcess as Server', () => {
   let childProcess: ChildProcess
