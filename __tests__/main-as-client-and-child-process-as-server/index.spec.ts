@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 describe('Main as Client, ChildProcess as Server', () => {
   let childProcess: ChildProcess
   beforeEach(() => {
-    childProcess = fork(path.resolve(__dirname, './child-process.js'), {
+    childProcess = fork(path.resolve(__dirname, './child-process.ts'), {
       serialization: 'advanced'
     })
   })
