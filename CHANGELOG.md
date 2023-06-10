@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.2](https://github.com/delight-rpc/child-process/compare/v0.6.1...v0.6.2) (2023-06-10)
+
+
+### Bug Fixes
+
+* export src ([e8feace](https://github.com/delight-rpc/child-process/commit/e8feace310ab6ef42ad13eb73981acef0545d56a))
+
 ### [0.6.1](https://github.com/delight-rpc/child-process/compare/v0.6.0...v0.6.1) (2023-03-19)
 
 ## [0.6.0](https://github.com/delight-rpc/child-process/compare/v0.5.2...v0.6.0) (2023-03-19)
