@@ -49,7 +49,7 @@ describe('Main as Client, ChildProcess as Server', () => {
     expect(err!.message).toMatch('hello')
   })
 
-  it('error (batch)', async () => {
+  test('error (batch)', async () => {
     const [client, close] = createBatchClient(childProcess)
     const proxy = createBatchProxy<IAPI>()
 
