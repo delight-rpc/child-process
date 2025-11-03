@@ -12,19 +12,19 @@ export function createClient<IAPI extends object>(
     channel?: string
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
-  const pendings: Record<string, Deferred<IResponse<unknown>> | undefined> = {}
+  const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
 
   process.on('message', handler)
 
   const client = DelightRPC.createClient<IAPI>(
     async function send(request: IRequest<unknown>) {
       const res = new Deferred<IResponse<unknown>>()
-      pendings[request.id] = res
+      pendings.set(request.id, res)
       try {
         process.send!(request)
         return await res
       } finally {
-        delete pendings[request.id]
+        pendings.delete(request.id)
       }
     }
   , {
@@ -40,14 +40,14 @@ export function createClient<IAPI extends object>(
     process.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred!.reject(new ClientClosed())
-      delete pendings[key]
+      deferred.reject(new ClientClosed())
+      pendings.delete(key)
     }
   }
 
   function handler(res: any): void {
     if (DelightRPC.isResult(res) || DelightRPC.isError(res)) {
-      pendings[res.id]?.resolve(res)
+      pendings.get(res.id)?.resolve(res)
     }
   }
 }
@@ -59,11 +59,10 @@ export function createBatchClient<DataType>(
     channel?: string
   } = {}
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
-  const pendings: Record<
+  const pendings: Map<
     string
-  , | Deferred<IError | IBatchResponse<unknown>>
-    | undefined
-  > = {}
+  , Deferred<IError | IBatchResponse<unknown>>
+  > = new Map()
 
   process.on('message', handler)
 
@@ -73,12 +72,12 @@ export function createBatchClient<DataType>(
       | IError
       | IBatchResponse<unknown>
       >()
-      pendings[request.id] = res
+      pendings.set(request.id, res)
       try {
         process.send!(request)
         return await res
       } finally {
-        delete pendings[request.id]
+        pendings.delete(request.id)
       }
     }
   , {
@@ -93,14 +92,14 @@ export function createBatchClient<DataType>(
     process.off('message', handler)
 
     for (const [key, deferred] of Object.entries(pendings)) {
-      deferred!.reject(new ClientClosed())
-      delete pendings[key]
+      deferred.reject(new ClientClosed())
+      pendings.delete(key)
     }
   }
 
   function handler(res: any): void {
     if (DelightRPC.isError(res) || DelightRPC.isBatchResponse(res)) {
-      pendings[res.id]?.resolve(res)
+      pendings.get(res.id)?.resolve(res)
     }
   }
 }
