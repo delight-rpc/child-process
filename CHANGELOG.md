@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.3](https://github.com/delight-rpc/child-process/compare/v0.6.2...v0.6.3) (2025-11-03)
+
 ### [0.6.2](https://github.com/delight-rpc/child-process/compare/v0.6.1...v0.6.2) (2023-06-10)
 
 
