@@ -1,6 +1,6 @@
 import * as DelightRPC from 'delight-rpc'
 import { ChildProcess } from 'child_process'
-import { isntNull } from '@blackglory/prelude'
+import { isError, isntNull, pass } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 
 export function createServer<IAPI extends object>(
@@ -39,11 +39,20 @@ export function createServer<IAPI extends object>(
           , version
           , channel
           , ownPropsOnly
+          , signal: controller.signal
           }
         )
 
         if (isntNull(result)) {
-          process.send!(result)
+          process.send!(result, err => {
+            if (err) {
+              if ((err as NodeJS.ErrnoException).code === 'ERR_IPC_CHANNEL_CLOSED') {
+                pass()
+              } else {
+                throw err
+              }
+            }
+          })
         }
       } finally {
         idToController.delete(message.id)
