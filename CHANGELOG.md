@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.4](https://github.com/delight-rpc/child-process/compare/v0.7.3...v0.7.4) (2026-02-25)
+
+
+### Features
+
+* add more destructors ([f04abd0](https://github.com/delight-rpc/child-process/commit/f04abd06417ccc4a77730d8dcda99faf8e324441))
+
 ### [0.7.3](https://github.com/delight-rpc/child-process/compare/v0.7.2...v0.7.3) (2026-02-25)
 
 ### [0.7.2](https://github.com/delight-rpc/child-process/compare/v0.7.1...v0.7.2) (2026-02-25)
