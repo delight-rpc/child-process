@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/delight-rpc/child-process/compare/v0.6.6...v0.7.0) (2026-02-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **server:** Node.js v16 => Node.js v22
+
+### Bug Fixes
+
+* **server:** abort request by channel fields ([0ef8590](https://github.com/delight-rpc/child-process/commit/0ef8590317c027c75663919638b2093cc75af61a))
+
 ### [0.6.6](https://github.com/delight-rpc/child-process/compare/v0.6.5...v0.6.6) (2026-02-25)
 
 
