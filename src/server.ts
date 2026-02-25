@@ -3,6 +3,7 @@ import { ChildProcess } from 'child_process'
 import { isntNull, pass } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 import { HashMap } from '@blackglory/structures'
+import { SyncDestructor } from 'extra-defer'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
@@ -14,6 +15,8 @@ export function createServer<IAPI extends object>(
     ownPropsOnly?: boolean
   } = {}
 ): () => void {
+  const destructor = new SyncDestructor()
+
   const channelIdToController: HashMap<
     {
       channel?: string
@@ -21,14 +24,15 @@ export function createServer<IAPI extends object>(
     }
   , AbortController
   > = new HashMap(({ channel, id }) => JSON.stringify([channel, id]))
+  destructor.defer(abortAllPendings)
 
-  process.on('message', handleMessage)
+  process.on('message', receive)
+  destructor.defer(() => process.off('message', receive))
+
   process.on('disconnect', abortAllPendings)
-  return () => {
-    process.off('message', handleMessage)
-    process.off('disconnect', abortAllPendings)
-    abortAllPendings()
-  }
+  destructor.defer(() => process.off('disconnect', abortAllPendings))
+
+  return () => destructor.execute()
 
   function abortAllPendings(): void {
     for (const controller of channelIdToController.values()) {
@@ -38,10 +42,13 @@ export function createServer<IAPI extends object>(
     channelIdToController.clear()
   }
 
-  async function handleMessage(message: unknown): Promise<void> {
+  async function receive(message: unknown): Promise<void> {
     if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
+      const destructor = new SyncDestructor()
+
       const controller = new AbortController()
       channelIdToController.set(message, controller)
+      destructor.defer(() => channelIdToController.delete(message))
 
       try {
         const result = await DelightRPC.createResponse(
@@ -69,7 +76,7 @@ export function createServer<IAPI extends object>(
           })
         }
       } finally {
-        channelIdToController.delete(message)
+        destructor.execute()
       }
     } else if (DelightRPC.isAbort(message)) {
       if (DelightRPC.matchChannel(message, channel)) {
