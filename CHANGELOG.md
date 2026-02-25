@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.6](https://github.com/delight-rpc/child-process/compare/v0.6.5...v0.6.6) (2026-02-25)
+
+
+### Bug Fixes
+
+* **server:** add signal and swallow ERR_IPC_CHANNEL_CLOSED ([a58d49a](https://github.com/delight-rpc/child-process/commit/a58d49abac247c7b9625c9e8107b85041ed97392))
+
 ### [0.6.5](https://github.com/delight-rpc/child-process/compare/v0.6.4...v0.6.5) (2026-02-25)
 
 
