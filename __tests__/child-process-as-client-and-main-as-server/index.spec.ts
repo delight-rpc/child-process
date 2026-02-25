@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest'
 import { createClient } from '@src/client.js'
 import { createServer } from '@src/server.js'
 import { fork } from 'child_process'
@@ -29,7 +30,7 @@ const api: ImplementationOf<IAPI> = {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const filename = path.resolve(__dirname, './child-process.ts')
+const filename = path.resolve(__dirname, './child-process.js')
 
 describe('ChildProcess as Client, Main as Server', () => {
   test('result', async () => {

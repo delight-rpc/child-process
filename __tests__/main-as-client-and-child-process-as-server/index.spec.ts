@@ -1,3 +1,4 @@
+import { describe, beforeEach, afterEach, test, expect } from 'vitest'
 import { createBatchClient, createClient } from '@src/client.js'
 import { fork, ChildProcess } from 'child_process'
 import { IAPI } from './contract.js'
@@ -12,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 describe('Main as Client, ChildProcess as Server', () => {
   let childProcess: ChildProcess
   beforeEach(() => {
-    childProcess = fork(path.resolve(__dirname, './child-process.ts'), {
+    childProcess = fork(path.resolve(__dirname, './child-process.js'), {
       serialization: 'advanced'
     })
   })

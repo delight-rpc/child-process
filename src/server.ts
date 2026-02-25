@@ -1,7 +1,8 @@
 import * as DelightRPC from 'delight-rpc'
 import { ChildProcess } from 'child_process'
-import { isError, isntNull, pass } from '@blackglory/prelude'
+import { isntNull, pass } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
+import { HashMap } from '@blackglory/structures'
 
 export function createServer<IAPI extends object>(
   api: DelightRPC.ImplementationOf<IAPI>
@@ -13,22 +14,28 @@ export function createServer<IAPI extends object>(
     ownPropsOnly?: boolean
   } = {}
 ): () => void {
-  const idToController: Map<string, AbortController> = new Map()
+  const channelIdToController: HashMap<
+    {
+      channel?: string
+    , id: string
+    }
+  , AbortController
+  > = new HashMap(({ channel, id }) => JSON.stringify([channel, id]))
 
   process.on('message', handler)
   process.on('disconnect', () => {
-    for (const controller of idToController.values()) {
+    for (const controller of channelIdToController.values()) {
       controller.abort()
     }
 
-    idToController.clear()
+    channelIdToController.clear()
   })
   return () => process.off('message', handler)
 
   async function handler(message: unknown): Promise<void> {
     if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
       const controller = new AbortController()
-      idToController.set(message.id, controller)
+      channelIdToController.set(message, controller)
 
       try {
         const result = await DelightRPC.createResponse(
@@ -44,6 +51,7 @@ export function createServer<IAPI extends object>(
         )
 
         if (isntNull(result)) {
+          // @ts-expect-error TypeScript无法正确合并`ChildProcess` 和 `NodeJS.Process`的send方法.
           process.send!(result, err => {
             if (err) {
               if ((err as NodeJS.ErrnoException).code === 'ERR_IPC_CHANNEL_CLOSED') {
@@ -55,12 +63,12 @@ export function createServer<IAPI extends object>(
           })
         }
       } finally {
-        idToController.delete(message.id)
+        channelIdToController.delete(message)
       }
     } else if (DelightRPC.isAbort(message)) {
       if (DelightRPC.matchChannel(message, channel)) {
-        idToController.get(message.id)?.abort()
-        idToController.delete(message.id)
+        channelIdToController.get(message)?.abort()
+        channelIdToController.delete(message)
       }
     }
   }
