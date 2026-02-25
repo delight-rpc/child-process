@@ -22,17 +22,23 @@ export function createServer<IAPI extends object>(
   , AbortController
   > = new HashMap(({ channel, id }) => JSON.stringify([channel, id]))
 
-  process.on('message', handler)
-  process.on('disconnect', () => {
+  process.on('message', handleMessage)
+  process.on('disconnect', abortAllPendings)
+  return () => {
+    process.off('message', handleMessage)
+    process.off('disconnect', abortAllPendings)
+    abortAllPendings()
+  }
+
+  function abortAllPendings(): void {
     for (const controller of channelIdToController.values()) {
       controller.abort()
     }
 
     channelIdToController.clear()
-  })
-  return () => process.off('message', handler)
+  }
 
-  async function handler(message: unknown): Promise<void> {
+  async function handleMessage(message: unknown): Promise<void> {
     if (DelightRPC.isRequest(message) || DelightRPC.isBatchRequest(message)) {
       const controller = new AbortController()
       channelIdToController.set(message, controller)
