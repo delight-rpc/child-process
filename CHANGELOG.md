@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.2](https://github.com/delight-rpc/child-process/compare/v0.7.1...v0.7.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* **client:** abort all pendings when closing the client ([fce4ee1](https://github.com/delight-rpc/child-process/commit/fce4ee18a8739139c35d71139b253204117c4ffc))
+
 ### [0.7.1](https://github.com/delight-rpc/child-process/compare/v0.7.0...v0.7.1) (2026-02-25)
 
 
