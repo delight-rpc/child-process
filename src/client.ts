@@ -17,7 +17,8 @@ export function createClient<IAPI extends object>(
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
   const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
 
-  process.on('message', handler)
+  process.on('message', handleMessage)
+  process.on('disconnect', abortAllPendings)
 
   const client = DelightRPC.createClient<IAPI>(
     async function send(request, signal) {
@@ -49,16 +50,21 @@ export function createClient<IAPI extends object>(
 
   return [client, close]
 
-  function close() {
-    process.off('message', handler)
-
-    for (const [key, deferred] of pendings.entries()) {
-      deferred.reject(new ClientClosed())
-      pendings.delete(key)
-    }
+  function close(): void {
+    process.off('message', handleMessage)
+    process.off('disconnect', abortAllPendings)
+    abortAllPendings()
   }
 
-  function handler(res: unknown): void {
+  function abortAllPendings(): void {
+    for (const deferred of pendings.values()) {
+      deferred.reject(new ClientClosed())
+    }
+
+    pendings.clear()
+  }
+
+  function handleMessage(res: unknown): void {
     if (DelightRPC.isResult(res) || DelightRPC.isError(res)) {
       pendings.get(res.id)?.resolve(res)
     }
@@ -78,7 +84,8 @@ export function createBatchClient<DataType>(
   , Deferred<IError | IBatchResponse<unknown>>
   > = new Map()
 
-  process.on('message', handler)
+  process.on('message', handleMessage)
+  process.on('disconnect', abortAllPendings)
 
   const client = new DelightRPC.BatchClient(
     async function send(request: IBatchRequest<unknown>) {
@@ -111,16 +118,21 @@ export function createBatchClient<DataType>(
 
   return [client, close]
 
-  function close() {
-    process.off('message', handler)
-
-    for (const [key, deferred] of pendings.entries()) {
-      deferred.reject(new ClientClosed())
-      pendings.delete(key)
-    }
+  function close(): void {
+    process.off('message', handleMessage)
+    process.off('disconnect', abortAllPendings)
+    abortAllPendings()
   }
 
-  function handler(res: unknown): void {
+  function abortAllPendings(): void {
+    for (const deferred of pendings.values()) {
+      deferred.reject(new ClientClosed())
+    }
+
+    pendings.clear()
+  }
+
+  function handleMessage(res: unknown): void {
     if (DelightRPC.isError(res) || DelightRPC.isBatchResponse(res)) {
       pendings.get(res.id)?.resolve(res)
     }
