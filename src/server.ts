@@ -29,10 +29,22 @@ export function createServer<IAPI extends object>(
   process.on('message', receive)
   destructor.defer(() => process.off('message', receive))
 
+  if (process instanceof ChildProcess) {
+    process.on('exit', close)
+    destructor.defer(() => process.off('exit', close))
+  } else {
+    process.on('exit', close)
+    destructor.defer(() => process.off('exit', close))
+  }
+
   process.on('disconnect', abortAllPendings)
   destructor.defer(() => process.off('disconnect', abortAllPendings))
 
-  return () => destructor.execute()
+  return close
+
+  function close(): void {
+    destructor.execute()
+  }
 
   function abortAllPendings(): void {
     for (const controller of channelIdToController.values()) {
