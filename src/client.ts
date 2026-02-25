@@ -2,14 +2,17 @@ import * as DelightRPC from 'delight-rpc'
 import { ChildProcess } from 'child_process'
 import { Deferred } from 'extra-promise'
 import { CustomError } from '@blackglory/errors'
-import { IRequest, IResponse, IError, IBatchRequest, IBatchResponse } from '@delight-rpc/protocol'
+import { IResponse, IError, IBatchRequest, IBatchResponse } from '@delight-rpc/protocol'
+import { raceAbortSignals, timeoutSignal, withAbortSignal } from 'extra-abort'
+import { isntUndefined } from '@blackglory/prelude'
 
 export function createClient<IAPI extends object>(
   process: ChildProcess | NodeJS.Process
-, { parameterValidators, expectedVersion, channel }: {
+, { parameterValidators, expectedVersion, channel, timeout }: {
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: string
     channel?: string
+    timeout?: number
   } = {}
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void] {
   const pendings: Map<string, Deferred<IResponse<unknown>>> = new Map()
@@ -17,12 +20,22 @@ export function createClient<IAPI extends object>(
   process.on('message', handler)
 
   const client = DelightRPC.createClient<IAPI>(
-    async function send(request: IRequest<unknown>) {
+    async function send(request, signal) {
       const res = new Deferred<IResponse<unknown>>()
       pendings.set(request.id, res)
       try {
         process.send!(request)
-        return await res
+
+        const mergedSignal = raceAbortSignals([
+          isntUndefined(timeout) && timeoutSignal(timeout)
+        , signal
+        ])
+        mergedSignal.addEventListener('abort', () => {
+          const abort = DelightRPC.createAbort(request.id, channel)
+          process.send!(abort)
+        })
+
+        return await withAbortSignal(mergedSignal, () => res)
       } finally {
         pendings.delete(request.id)
       }
@@ -45,7 +58,7 @@ export function createClient<IAPI extends object>(
     }
   }
 
-  function handler(res: any): void {
+  function handler(res: unknown): void {
     if (DelightRPC.isResult(res) || DelightRPC.isError(res)) {
       pendings.get(res.id)?.resolve(res)
     }
@@ -54,9 +67,10 @@ export function createClient<IAPI extends object>(
 
 export function createBatchClient<DataType>(
   process: ChildProcess | NodeJS.Process
-, { expectedVersion, channel }: {
+, { expectedVersion, channel, timeout }: {
     expectedVersion?: string
     channel?: string
+    timeout?: number
   } = {}
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void] {
   const pendings: Map<
@@ -75,7 +89,16 @@ export function createBatchClient<DataType>(
       pendings.set(request.id, res)
       try {
         process.send!(request)
-        return await res
+
+        const mergedSignal = raceAbortSignals([
+          isntUndefined(timeout) && timeoutSignal(timeout)
+        ])
+        mergedSignal.addEventListener('abort', () => {
+          const abort = DelightRPC.createAbort(request.id, channel)
+          process.send!(abort)
+        })
+
+        return await withAbortSignal(mergedSignal, () => res)
       } finally {
         pendings.delete(request.id)
       }
@@ -97,7 +120,7 @@ export function createBatchClient<DataType>(
     }
   }
 
-  function handler(res: any): void {
+  function handler(res: unknown): void {
     if (DelightRPC.isError(res) || DelightRPC.isBatchResponse(res)) {
       pendings.get(res.id)?.resolve(res)
     }

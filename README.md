@@ -71,6 +71,7 @@ function createClient<IAPI extends object>(
     parameterValidators?: DelightRPC.ParameterValidators<IAPI>
     expectedVersion?: string
     channel?: string
+    timeout?: number
   }
 ): [client: DelightRPC.ClientProxy<IAPI>, close: () => void]
 ```
@@ -82,6 +83,7 @@ function createBatchClient<DataType>(
 , options?: {
     expectedVersion?: string
     channel?: string
+    timeout?: number
   }
 ): [client: DelightRPC.BatchClient<DataType>, close: () => void]
 ```
