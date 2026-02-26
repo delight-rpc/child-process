@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.5](https://github.com/delight-rpc/child-process/compare/v0.7.4...v0.7.5) (2026-02-26)
+
+
+### Features
+
+* **client:** throw an error while the child process is busy ([7a48dba](https://github.com/delight-rpc/child-process/commit/7a48dbae070680ea782ce63943f9d361ba67eb0c))
+
 ### [0.7.4](https://github.com/delight-rpc/child-process/compare/v0.7.3...v0.7.4) (2026-02-25)
 
 
