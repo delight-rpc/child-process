@@ -1,7 +1,7 @@
 import * as DelightRPC from 'delight-rpc'
 import { ChildProcess } from 'child_process'
 import { Deferred } from 'extra-promise'
-import { CustomError } from '@blackglory/errors'
+import { assert, CustomError } from '@blackglory/errors'
 import { IResponse, IError, IBatchRequest, IBatchResponse } from '@delight-rpc/protocol'
 import { raceAbortSignals, timeoutSignal, withAbortSignal } from 'extra-abort'
 import { isntUndefined } from '@blackglory/prelude'
@@ -44,7 +44,8 @@ export function createClient<IAPI extends object>(
       destructor.defer(() => pendings.delete(request.id))
 
       try {
-        process.send!(request)
+        const success = process.send!(request)
+        assert(success, 'The child process is busy')
 
         const mergedSignal = raceAbortSignals([
           isntUndefined(timeout) && timeoutSignal(timeout)
@@ -129,7 +130,8 @@ export function createBatchClient<DataType>(
       destructor.defer(() => pendings.delete(request.id))
 
       try {
-        process.send!(request)
+        const success = process.send!(request)
+        assert(success, 'The child process is busy')
 
         const mergedSignal = raceAbortSignals([
           isntUndefined(timeout) && timeoutSignal(timeout)
