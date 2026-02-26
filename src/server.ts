@@ -82,6 +82,7 @@ export function createServer<IAPI extends object>(
               if ((err as NodeJS.ErrnoException).code === 'ERR_IPC_CHANNEL_CLOSED') {
                 pass()
               } else {
+                // 如果存在其他错误, 让进程崩溃.
                 throw err
               }
             }
