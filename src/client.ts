@@ -77,8 +77,10 @@ export function createClient<IAPI extends object>(
   }
 
   function abortAllPendings(): void {
+    const err = new ClientClosed()
+
     for (const deferred of pendings.values()) {
-      deferred.reject(new ClientClosed())
+      deferred.reject(err)
     }
 
     pendings.clear()
@@ -158,8 +160,10 @@ export function createBatchClient<DataType>(
   }
 
   function abortAllPendings(): void {
+    const err = new ClientClosed()
+
     for (const deferred of pendings.values()) {
-      deferred.reject(new ClientClosed())
+      deferred.reject(err)
     }
 
     pendings.clear()
